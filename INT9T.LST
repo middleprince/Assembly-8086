@@ -1,0 +1,148 @@
+Microsoft (R) Macro Assembler Version 5.00                  4/13/17 16:39:31
+                                                             Page     1-1
+
+
+				assume cs:code 
+				 
+ 0000				code segment 
+ 0000				start: 
+				 
+ 0000				changeint9:				
+								;the new keyboa
+				rd interruption !!!!!!!!!!! 
+							 
+ 0000  B8 0000						mov ax,0 
+ 0003  8E C0						mov es,ax 
+				 
+ 0005  BE 0036 R					mov si,offset newint9h 
+				 
+ 0008  BF 0204						mov di,204h 
+ 000B  B9 0033						mov cx,offset newint9he
+				nd-offset newint9h 
+ 000E  FC						cld 
+ 000F  F3/ A4						rep movsb 
+				 
+ 0011  26: A1 0024					mov ax,es:[9*4] 
+ 0015  26: A3 0200					mov es:[200h],ax
+									
+					 
+ 0019  26: A1 0026					mov ax,es:[9*4+2] 
+ 001D  26: A3 0202					mov es:[202h],ax
+									;store 
+				orginal vertol in 0:200h  
+				 
+ 0021  FA						cli     	
+									
+					;set if =1 
+ 0022  26: C7 06 0024 0204				mov word ptr es:[9*4],2
+				04h 
+ 0029  26: C7 06 0026 0000				mov word ptr es:[9*4+2]
+				,0			;modify the table 
+ 0030  FB						sti 
+				 
+				 
+				 
+ 0031  B8 4C00						mov ax,4c00h 
+ 0034  CD 21						int 21h 
+				 
+ 0036						newint9h: 
+							 
+							 
+ 0036  E4 60						in al,60h 
+ 0038  9C						pushf 
+ 0039  2E: FF 1E 0200					call dword ptr cs:[200h
+				]		;call orginal keyboard interrup
+				tion 
+							 
+ 003E  3C 01						cmp al,01h 
+ 0040  74 0B						je f1func 
+Microsoft (R) Macro Assembler Version 5.00                  4/13/17 16:39:31
+                                                             Page     1-2
+
+
+ 0042  3C 3B						cmp al,3bh 
+ 0044  74 02						je esc1 
+							 
+				 
+ 0046  90					over:nop 
+ 0047  CF						iret 
+				 
+				 
+ 0048  E8 0069 R				esc1:call main 
+						 
+ 004B  EB F9						jmp over 
+				 
+ 004D						f1func:	 
+ 004D  50						push ax 
+ 004E  51						push cx 
+ 004F  06						push es 
+ 0050  57						push di 
+							 
+ 0051  B9 0FA0						mov cx,4000 
+ 0054  B8 B800						mov ax,0b800h 
+ 0057  8E C0						mov es,ax 
+ 0059  BF 0001						mov di,1 
+						 
+ 005C						circle1: 
+ 005C  26: FE 05					inc byte ptr es:[di] 
+ 005F  47						inc di 
+ 0060  47						inc di 
+ 0061  E2 F9						loop circle1 
+				 
+ 0063  5F						pop di 
+ 0064  07						pop es 
+ 0065  59						pop cx 
+ 0066  58						pop ax 
+				 
+ 0067  EB DD						jmp over 
+				 
+							 
+				 
+ 0069						main: 
+				 
+ 0069  90					newint9hend:nop 
+				 
+				 
+ 006A				code ends 
+				end start		 
+Microsoft (R) Macro Assembler Version 5.00                  4/13/17 16:39:31
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CODE . . . . . . . . . . . . . .  	006A	PARA	NONE	
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+CHANGEINT9 . . . . . . . . . . .  	L NEAR	0000	CODE
+CIRCLE1  . . . . . . . . . . . .  	L NEAR	005C	CODE
+
+ESC1 . . . . . . . . . . . . . .  	L NEAR	0048	CODE
+
+F1FUNC . . . . . . . . . . . . .  	L NEAR	004D	CODE
+
+MAIN . . . . . . . . . . . . . .  	L NEAR	0069	CODE
+
+NEWINT9H . . . . . . . . . . . .  	L NEAR	0036	CODE
+NEWINT9HEND  . . . . . . . . . .  	L NEAR	0069	CODE
+
+OVER . . . . . . . . . . . . . .  	L NEAR	0046	CODE
+
+START  . . . . . . . . . . . . .  	L NEAR	0000	CODE
+
+@FILENAME  . . . . . . . . . . .  	TEXT  int9t		
+
+
+     85 Source  Lines
+     85 Total   Lines
+     12 Symbols
+
+  50952 + 465592 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors

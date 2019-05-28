@@ -1,0 +1,303 @@
+Microsoft (R) Macro Assembler Version 5.00                  4/18/17 20:50:54
+                                                             Page     1-1
+
+
+				assume cs:code 
+				 
+ 0000				code segment 
+				 
+				 
+ 0000				clock: 
+				 
+ 0000  EB 64 90			            jmp timestart 
+ 0003  79 6F 75 20 63 61 6E	            massge: db 'you can prees F1 to cha
+				nge the color or  Esc to back to main menue. th
+				e TIME is:','$' 
+       20 70 72 65 65 73 20	
+       46 31 20 74 6F 20 63	
+       68 61 6E 67 65 20 74	
+       68 65 20 63 6F 6C 6F	
+       72 20 6F 72 20 20 45	
+       73 63 20 74 6F 20 62	
+       61 63 6B 20 74 6F 20	
+       6D 61 69 6E 20 6D 65	
+       6E 75 65 2E 20 74 68	
+       65 20 54 49 4D 45 20	
+       69 73 3A 24		
+ 0054  00 00 2F 00 00 2F 00	            timedata: db 0,0,'/',0,0,'/',0,0,' 
+				',0,0,':',0,0,':',0,0,'$' 
+       00 20 00 00 3A 00 00	
+       3A 00 00 24		
+				 
+				         
+				             
+ 0066  BF 0000			            timestart:mov di,0 
+				                ;call clean 
+ 0069  B6 04			                mov dh,4 
+ 006B  B2 01			                mov dl,1 
+ 006D  BE 0003 R		                mov si ,offset massge 
+ 0070  B4 02			                mov ah,2 
+ 0072  E8 013E R		                call display 
+ 0075				            cicledistime: 
+ 0075  50			                push ax 
+ 0076  BE 0054 R		                mov si,offset timedata 
+ 0079  8C C8			                mov ax,cs 
+ 007B  8E D8			                mov ds,ax 
+				 
+				                 
+ 007D  B4 00			                mov ah,0 
+ 007F  B0 09			                mov al,9 
+ 0081  E8 00D1 R		                call get 
+ 0084  E8 00D6 R		                call tra 
+ 0087  E8 00E4 R		                call put 
+				 
+ 008A  B0 08			                mov al,8 
+ 008C  E8 00D1 R		                call get 
+ 008F  E8 00D6 R		                call tra 
+ 0092  E8 00E4 R		                call put 
+				 
+Microsoft (R) Macro Assembler Version 5.00                  4/18/17 20:50:54
+                                                             Page     1-2
+
+
+ 0095  B0 07			                mov al,7 
+ 0097  E8 00D1 R		                call get 
+ 009A  E8 00D6 R		                call tra 
+ 009D  E8 00E4 R		                call put 
+				 
+ 00A0  B0 04			                mov al,4 
+ 00A2  E8 00D1 R		                call get 
+ 00A5  E8 00D6 R		                call tra 
+ 00A8  E8 00E4 R		                call put 
+				 
+ 00AB  B0 02			                mov al,2 
+ 00AD  E8 00D1 R		                call get 
+ 00B0  E8 00D6 R		                call tra 
+ 00B3  E8 00E4 R		                call put 
+				 
+ 00B6  B0 00			                mov al,0 
+ 00B8  E8 00D1 R		                call get 
+ 00BB  E8 00D6 R		                call tra 
+ 00BE  E8 00E4 R		                call put 
+				 
+				 
+ 00C1  58			                pop ax 
+				                 
+ 00C2  BE 0054 R		                mov si,offset timedata 
+ 00C5  B6 06			                mov dh,6 
+ 00C7  B2 14			                mov dl,20 
+				             
+ 00C9  E8 013E R		                call display 
+				                 
+ 00CC  E8 00ED R		                call isescf1 
+				 
+				                 
+				 
+ 00CF  EB A4			                jmp cicledistime 
+				         
+				 
+ 00D1				            get: 
+ 00D1  E6 70			                out 70h,al 
+ 00D3  E4 71			                in al,71h 
+ 00D5  C3			                ret      
+				 
+ 00D6  8A E0			            tra:mov ah,al 
+ 00D8  B1 04			                mov cl,4 
+ 00DA  D2 EC			                shr ah,cl 
+ 00DC  24 0F			                and al,00001111b 
+ 00DE  80 C4 30			                add ah,30h 
+ 00E1  04 30			                add al,30h 
+ 00E3  C3			                ret 
+				 
+				 
+ 00E4  88 24			            put:mov byte ptr [si],ah 
+ 00E6  88 44 01			                mov byte ptr [si].1,al 
+ 00E9  46			                inc si 
+ 00EA  46			                inc si 
+Microsoft (R) Macro Assembler Version 5.00                  4/18/17 20:50:54
+                                                             Page     1-3
+
+
+ 00EB  46			                inc si 
+ 00EC  C3			                ret 
+				 
+				 
+				 
+				;=================================is esc f1====
+				================== 
+ 00ED				 isescf1:        
+				                 
+ 00ED  B4 01			                mov ah,1                       
+				 ;is content in keyboard buffer,return one cont
+				ent code 
+ 00EF  CD 16			                int 16h 
+ 00F1  3C 1B			                cmp al,1bh                     
+				 ;is esc 
+ 00F3  74 0F			                je backmain 
+ 00F5  80 FC 3B			                cmp ah,3bh                     
+				 ; is f1 
+ 00F8  74 13			                je colorchange 
+ 00FA  80 FC 01			                cmp ah,1 
+ 00FD  74 04			                je backit 
+ 00FF  B4 00			                mov ah,0 
+ 0101  CD 16			                int 16h 
+ 0103				        backit:  
+				                 
+ 0103  C3			                ret 
+				 
+				 
+				 
+ 0104  B4 00			    backmain:   mov ah,0 
+ 0106  CD 16			                int 16h 
+				                ;call clean 
+				             
+				                ;jmp main 
+ 0108  B8 4C00			                mov ax,4c00h 
+ 010B  CD 21			                int 21h 
+				 
+ 010D  E8 0118 R		    colorchange: call colorchanges 
+ 0110  B4 00			                mov ah,0 
+ 0112  CD 16			                int 16h 
+ 0114  8A E2			                mov ah,dl 
+ 0116  EB EB			                jmp backit 
+				 
+				 
+ 0118				colorchanges: 
+ 0118  51			                push cx 
+ 0119  06			                push es 
+ 011A  57			                push di 
+				                 
+				 
+ 011B  B9 0FA0			                mov cx,4000 
+ 011E  B8 B800			                mov ax,0b800h 
+ 0121  8E C0			                mov es,ax 
+ 0123  BF 0001			                mov di,1 
+Microsoft (R) Macro Assembler Version 5.00                  4/18/17 20:50:54
+                                                             Page     1-4
+
+
+				                 
+ 0126  26: C6 05 01		    resetal:    mov byte ptr es:[di],1 
+ 012A				            circle1: 
+ 012A  26: 80 3D 07		                cmp byte ptr es:[di],7 
+ 012E  77 F6			                ja resetal 
+				 
+ 0130  26: FE 05		                inc byte ptr es:[di] 
+ 0133  47			                inc di 
+ 0134  47			                inc di 
+ 0135  E2 F3			                loop circle1 
+ 0137  26: 8A 14		                mov dl,es:[si] 
+ 013A  5F			                pop di 
+ 013B  07			                pop es 
+ 013C  59			                pop cx 
+				                 
+				 
+ 013D  C3			                ret 
+				 
+				 
+				 
+				 
+				;=========================================displ
+				ay functoin,using si to set position of the con
+				tent====================== 
+ 013E  52			display:        push dx 
+ 013F  1E			                push ds  
+ 0140  57			                push di 
+ 0141  06			                push es 
+ 0142  50			                push ax                        
+				 ;stroe the color 
+ 0143  8C C8			                mov ax,cs 
+ 0145  8E D8			                mov ds,ax 
+				                 
+ 0147  B8 B800			                mov ax,0b800h 
+ 014A  8E C0			                mov es,ax 
+				     
+				                        
+ 014C  8A C6			                mov al,dh                   ;dh
+				 set row 
+ 014E  B6 A0			                mov dh,160                  ;dl
+				 set cloumn 
+ 0150  F6 E6			                mul dh 
+ 0152  B6 00			                mov dh,0 
+ 0154  03 D2			                add dx,dx 
+ 0156  8B F8			                mov di,ax  
+ 0158  03 FA			                add di,dx 
+				 
+ 015A  58			                pop ax 
+				                 
+				 
+ 015B  8A 04			    circlep:    mov al,ds:[si] 
+ 015D  3C 24			                cmp al,'$' 
+ 015F  74 08			                je outprint 
+ 0161  26: 89 05		                mov word ptr es:[di],ax 
+Microsoft (R) Macro Assembler Version 5.00                  4/18/17 20:50:54
+                                                             Page     1-5
+
+
+ 0164  47			                inc di 
+ 0165  47			                inc di 
+ 0166  46			                inc si 
+ 0167  EB F2			                jmp circlep 
+				 
+ 0169  07			    outprint:   pop es 
+ 016A  5F			                pop di 
+ 016B  1F			                pop ds 
+ 016C  5A			                pop dx 
+ 016D  C3			                ret 
+				 
+				 
+ 016E				code ends 
+				end clock 
+Microsoft (R) Macro Assembler Version 5.00                  4/18/17 20:50:54
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CODE . . . . . . . . . . . . . .  	016E	PARA	NONE	
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+BACKIT . . . . . . . . . . . . .  	L NEAR	0103	CODE
+BACKMAIN . . . . . . . . . . . .  	L NEAR	0104	CODE
+
+CICLEDISTIME . . . . . . . . . .  	L NEAR	0075	CODE
+CIRCLE1  . . . . . . . . . . . .  	L NEAR	012A	CODE
+CIRCLEP  . . . . . . . . . . . .  	L NEAR	015B	CODE
+CLOCK  . . . . . . . . . . . . .  	L NEAR	0000	CODE
+COLORCHANGE  . . . . . . . . . .  	L NEAR	010D	CODE
+COLORCHANGES . . . . . . . . . .  	L NEAR	0118	CODE
+
+DISPLAY  . . . . . . . . . . . .  	L NEAR	013E	CODE
+
+GET  . . . . . . . . . . . . . .  	L NEAR	00D1	CODE
+
+ISESCF1  . . . . . . . . . . . .  	L NEAR	00ED	CODE
+
+MASSGE . . . . . . . . . . . . .  	L NEAR	0003	CODE
+
+OUTPRINT . . . . . . . . . . . .  	L NEAR	0169	CODE
+
+PUT  . . . . . . . . . . . . . .  	L NEAR	00E4	CODE
+
+RESETAL  . . . . . . . . . . . .  	L NEAR	0126	CODE
+
+TIMEDATA . . . . . . . . . . . .  	L NEAR	0054	CODE
+TIMESTART  . . . . . . . . . . .  	L NEAR	0066	CODE
+TRA  . . . . . . . . . . . . . .  	L NEAR	00D6	CODE
+
+@FILENAME  . . . . . . . . . . .  	TEXT  timet		
+
+
+    204 Source  Lines
+    204 Total   Lines
+     21 Symbols
+
+  51024 + 465520 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors
