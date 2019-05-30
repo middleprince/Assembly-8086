@@ -13,5 +13,5 @@
 
 ### 使用方法
 1. 将项目clone到本地：`git clone https://github.com/middleprince/Assembly-8086.git`.
-2. 在本机安装系统对应的 (dosbox)[https://www.dosbox.com/download.php?main=1]来运行代码，若本机是window，可以直接在系统的`cmd`中来运行。
+2. 在本机安装系统对应的 [dosbox](https://www.dosbox.com/download.php?main=1) 来运行代码，若本机是window，可以直接在系统的`cmd`中来运行。
 3. 详细的信息见个子文件中有相关的说明。
